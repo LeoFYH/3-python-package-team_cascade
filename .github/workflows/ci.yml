@@ -10,7 +10,7 @@ jobs:
   test:
     strategy:
       matrix:
-        python-version: ["3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13"]
     runs-on: ubuntu-latest
 
     steps:
@@ -22,11 +22,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies (pipenv)
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pipenv
-          pipenv install --dev
+          pipenv install --dev --skip-lock --python $(which python)
 
       - name: Run tests
         run: |
