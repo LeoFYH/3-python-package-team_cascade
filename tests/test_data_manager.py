@@ -1,0 +1,41 @@
+import os
+import sys
+import json
+import pytest
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from study_pet import data_manager as dm
+
+
+@pytest.fixture(autouse=True)
+def cleanup_data_file():
+    if os.path.exists(dm.DATA_PATH):
+        os.remove(dm.DATA_PATH)
+    yield
+    if os.path.exists(dm.DATA_PATH):
+        os.remove(dm.DATA_PATH)
+
+
+def test_load_state_creates_default_file():
+    state = dm.load_state()
+    assert os.path.exists(dm.DATA_PATH)
+    assert "name" in state
+    assert state["level"] == 1
+
+
+def test_save_state_writes_to_file():
+    test_state = {"name": "Testy", "level": 5, "experience": 99}
+    dm.save_state(test_state)
+    with open(dm.DATA_PATH, "r") as f:
+        data = json.load(f)
+    assert data["name"] == "Testy"
+    assert data["level"] == 5
+
+
+def test_reset_state_resets_to_default():
+    dm.save_state({"name": "WrongPet", "level": 10})
+    dm.reset_state()
+    state = dm.load_state()
+    assert state["name"] == "PomPom"
+    assert state["level"] == 1
