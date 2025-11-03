@@ -11,7 +11,13 @@ import random
 def rename_pet(new_name: str = None):
     """
     Renames the pet and saves to state.
-    If no new_name is passed, will ask user input interactively.
+    
+    Args:
+        new_name: Optional new name for the pet. If None, will prompt interactively.
+                 If provided, directly sets the pet's name.
+    
+    Returns:
+        str: The new name that was set, or None if operation was cancelled.
     """
     state = load_state()
     old_name = state.get("name", "Unnamed")
@@ -22,11 +28,12 @@ def rename_pet(new_name: str = None):
 
     if not new_name:
         print("Name cannot be empty.")
-        return
+        return None
 
     state["name"] = new_name
     save_state(state)
     print(f"Pet name changed to '{new_name}'!\n")
+    return new_name
 
 
 def collect_money():
@@ -60,10 +67,17 @@ def collect_money():
     print(f"Total balance: {state['money']} coins.")
 
 
-def feed_pet():
+def feed_pet(food_type: str = None):
     """
     Feed your pet with food purchased using money.
     Each food has different cost and mood increase.
+    
+    Args:
+        food_type: Optional food type to feed directly. Valid values: "apple", "cake",
+                  "coffee", "carrot", "sushi", "custom". If None, shows interactive menu.
+    
+    Returns:
+        bool: True if feeding was successful, False otherwise.
     """
     state = load_state()
     name = state.get("name", "Guido")
@@ -88,33 +102,43 @@ def feed_pet():
         },
         "custom": {"cost": 80, "mood": 10, "emoji": "🍽️", "msg": "Yum! That was tasty!"},
     }
-    print(f"\n{name}'s current mood: {mood}/100 😊")
-    print(f"Current balance: {money} coins 💰")
-    print("Choose something to feed your pet:")
-    print("1. Apple 🍎 (Cost: 80 | +10 mood)")
-    print("2. Cake 🍰 (Cost: 150 | +20 mood)")
-    print("3. Coffee ☕ (Cost: 50 | +5 mood)")
-    print("4. Carrot 🥕 (Cost: 65 | +8 mood)")
-    print("5. Sushi 🍣 (Cost: 130 | +15 mood)")
-    print("6. Custom food ✏️ (Cost: 80 | +10 mood)")
-    print("7. Return")
-    choice = input("Select (1–7): ").strip()
+    
+    # If food_type provided, use it directly
+    if food_type:
+        food_type = food_type.lower()
+        if food_type not in foods:
+            print(f"Invalid food type: {food_type}. Valid options: {', '.join(foods.keys())}")
+            return False
+        selected = food_type
+    else:
+        # Interactive mode
+        print(f"\n{name}'s current mood: {mood}/100 😊")
+        print(f"Current balance: {money} coins 💰")
+        print("Choose something to feed your pet:")
+        print("1. Apple 🍎 (Cost: 80 | +10 mood)")
+        print("2. Cake 🍰 (Cost: 150 | +20 mood)")
+        print("3. Coffee ☕ (Cost: 50 | +5 mood)")
+        print("4. Carrot 🥕 (Cost: 65 | +8 mood)")
+        print("5. Sushi 🍣 (Cost: 130 | +15 mood)")
+        print("6. Custom food ✏️ (Cost: 80 | +10 mood)")
+        print("7. Return")
+        choice = input("Select (1–7): ").strip()
 
-    mapping = {
-        "1": "apple",
-        "2": "cake",
-        "3": "coffee",
-        "4": "carrot",
-        "5": "sushi",
-        "6": "custom",
-    }
-    if choice == "7":
-        return
-    if choice not in mapping:
-        print(" Invalid choice.")
-        return
+        mapping = {
+            "1": "apple",
+            "2": "cake",
+            "3": "coffee",
+            "4": "carrot",
+            "5": "sushi",
+            "6": "custom",
+        }
+        if choice == "7":
+            return False
+        if choice not in mapping:
+            print(" Invalid choice.")
+            return False
+        selected = mapping[choice]
 
-    selected = mapping[choice]
     food = foods[selected]
 
     # handle custom name
@@ -128,7 +152,7 @@ def feed_pet():
     # check balance
     if money < food["cost"]:
         print(f"Not enough coins! {food['cost']} needed, but you have {money}.")
-        return
+        return False
 
     # apply effects
     money -= food["cost"]
@@ -142,3 +166,4 @@ def feed_pet():
     print(food["msg"])
     print(f" Mood increased to {new_mood}/100.")
     print(f" Remaining balance: {money} coins.\n")
+    return True
