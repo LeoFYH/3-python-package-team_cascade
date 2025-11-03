@@ -39,3 +39,10 @@ def test_reset_state_resets_to_default():
     state = dm.load_state()
     assert state["name"] == "PomPom"
     assert state["level"] == 1
+
+
+def test_save_and_reload():
+    s = {"name": "A", "level": 5}
+    dm.save_state(s)
+    re = dm.load_state()
+    assert re["name"] == "A"

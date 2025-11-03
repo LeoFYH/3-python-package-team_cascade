@@ -73,22 +73,115 @@ def get_status():
 
     name = state.get("name", "Unnamed")
     mood = state.get("mood", 100)
+    money = state.get("money", 0)
+
     streak = state.get("streak_days", 0)
     last_study = state.get("last_study_date", "N/A")
 
     studying = "Studying now" if last_start else " Idle"
 
+    if mood >= 80:
+        mood_status = "😊 Very happy!"
+    elif mood >= 60:
+        mood_status = "😌 Content."
+    elif mood >= 40:
+        mood_status = "😕 A bit tired..."
+    elif mood >= 20:
+        mood_status = "😣 Needs care soon!"
+    else:
+        mood_status = "😭 Very sad!"
+
     status = (
-        f"\n Pet Status (Live Preview)\n"
-        f"Name: {name}\n"
+        f"\n Pet Status \n"
+        f"--------------------------------\n"
+        f"{name}\n"
         f"Level: {level} ({exp:.0f} EXP)\n"
         f"Total Study Time: {total_time:.2f} hrs (+{elapsed:.2f}h current)\n"
         f"Last Study: {last_study}\n"
-        f"Mood: {mood}/100    Streak: {streak} days\n"
-        f"Session: {studying}"
+        f"\nMood: {mood}/100 — {mood_status}\n"
+        f"Money: {money} coins\n"
+        f"Streak: {streak} days\n"
+        f"\nSession: {studying}\n"
+        f"--------------------------------"
     )
 
     return status
+
+
+def check_daily_mood_decay():
+    """
+    Called at program startup.
+    Decreases pet mood based on days since last login or last feeding.
+    """
+    state = load_state()
+
+    last_open_str = state.get("last_open_date")
+    last_feed_str = state.get("last_feed_date")
+    mood = state.get("mood", 100)
+
+    today = datetime.now().date()
+    last_open = None
+    last_feed = None
+
+    # convert stored dates
+    if last_open_str:
+        try:
+            last_open = datetime.strptime(last_open_str, "%Y-%m-%d").date()
+        except ValueError:
+            last_open = today
+    else:
+        last_open = today
+
+    if last_feed_str:
+        try:
+            last_feed = datetime.strptime(last_feed_str, "%Y-%m-%d").date()
+        except ValueError:
+            last_feed = today
+
+    # calculate days passed since last open
+    days_passed = (today - last_open).days
+    if days_passed <= 0:
+        # same day login, no decay
+        state["last_open_date"] = today.strftime("%Y-%m-%d")
+        save_state(state)
+        return
+
+    # base decay by days
+    if days_passed == 1:
+        decay = 5
+    elif days_passed == 2:
+        decay = 15
+    elif days_passed == 3:
+        decay = 35
+    elif days_passed == 4:
+        decay = 60
+    else:
+        # 5 or more days
+        decay = 999  # will drop to 0 anyway
+
+    # extra penalty if not fed yesterday
+    if last_feed is None or (today - last_feed).days >= 1:
+        decay += 10
+
+    # apply decay
+    new_mood = max(0, mood - decay)
+
+    # update state
+    state["mood"] = new_mood
+    state["last_open_date"] = today.strftime("%Y-%m-%d")
+    save_state(state)
+
+    # feedback message
+    if decay > 0:
+        print(
+            f"\nIt's been {days_passed} day(s) since you last visited."
+            f"\nYour pet’s mood decreased by {decay} → now {new_mood}/100 💖"
+        )
+
+    if new_mood == 0:
+        print("Your pet is very sad... please feed it soon!")
+
+    return new_mood
 
 
 #  Manual test
