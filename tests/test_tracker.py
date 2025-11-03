@@ -5,7 +5,14 @@ import pytest
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
-from study_pet.tracker import start_session, end_session, get_total_time, reset_sessions
+from study_pet.tracker import (
+    start_session,
+    end_session,
+    get_total_time,
+    reset_sessions,
+    manual_close,
+    _auto_end_session,
+)
 from study_pet.data_manager import load_state, reset_state, save_state
 
 
@@ -53,3 +60,12 @@ def test_end_session_without_start_does_not_crash():
         assert True
     except Exception as e:
         pytest.fail(f"end_session() raised an unexpected exception: {e}")
+
+
+def test_auto_end_session_respects_manual_close(monkeypatch):
+    start_session()
+    monkeypatch.setattr("study_pet.tracker.manual_close", True)
+    _auto_end_session()
+    state = load_state()
+    # still active because manual close skipped
+    assert state["last_session_start"] is not None

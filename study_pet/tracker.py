@@ -83,10 +83,12 @@ if __name__ == "__main__":
     print("2. end_session()")
     print("3. reset_sessions()")
 
+manual_close = False
+
 
 def _auto_end_session(*args):
     state = load_state()
-    if state.get("last_session_start"):
+    if state.get("last_session_start") and not manual_close:
         print("\n Auto-saving your progress...")
         end_session()
 

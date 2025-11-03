@@ -13,6 +13,10 @@ default_state = {
     "last_study_date": None,
     "mood": 100,
     "streak_days": 0,
+    "money": 0,
+    "last_collect_time": None,
+    "last_feed_date": None,
+    "last_open_date": None,
 }
 
 
