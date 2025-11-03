@@ -1,6 +1,5 @@
 [![CI](https://github.com/swe-students-fall2025/3-python-package-team_cascade/actions/workflows/ci.yml/badge.svg?branch=pipfile-experiment)](https://github.com/swe-students-fall2025/3-python-package-team_cascade/actions/workflows/ci.yml)
 
-````markdown
 # StudyPet
 
 ## Team Members
@@ -26,7 +25,3 @@ git clone https://github.com/YOUR_USERNAME/team_cascade.git
 cd team_cascade
 pipenv install --dev
 ```
-
-## Team
-
-- [Leo Fu](https://github.com/https://github.com/LeoFYH)
