@@ -25,10 +25,6 @@ def main():
         choices=["apple", "cake", "coffee", "carrot", "sushi", "custom"],
         help="Food type to feed directly (optional, shows menu if not provided)",
     )
-    feed_parser.add_argument(
-        "--custom-name",
-        help="Custom food name (only used with --food-type custom)",
-    )
     
     # Collect command
     collect_parser = subparsers.add_parser("collect", help="Collect coins")
@@ -63,10 +59,7 @@ def main():
     elif args.command == "status":
         print(get_status())
     elif args.command == "feed":
-        feed_pet(
-            food_type=getattr(args, 'food_type', None),
-            custom_name=getattr(args, 'custom_name', None),
-        )
+        feed_pet(food_type=getattr(args, 'food_type', None))
     elif args.command == "collect":
         collect_money(force=getattr(args, 'force', False))
     elif args.command == "rename":

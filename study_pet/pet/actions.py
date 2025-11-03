@@ -60,10 +60,14 @@ def collect_money():
     print(f"Total balance: {state['money']} coins.")
 
 
-def feed_pet():
+def feed_pet(food_type: str = None):
     """
     Feed your pet with food purchased using money.
     Each food has different cost and mood increase.
+    
+    Args:
+        food_type: Optional food type to feed directly. Valid values: "apple", "cake",
+                  "coffee", "carrot", "sushi", "custom". If None, shows interactive menu.
     """
     state = load_state()
     name = state.get("name", "PomPom")
@@ -88,33 +92,43 @@ def feed_pet():
         },
         "custom": {"cost": 80, "mood": 10, "emoji": "🍽️", "msg": "Yum! That was tasty!"},
     }
-    print(f"\n{name}'s current mood: {mood}/100 😊")
-    print(f"Current balance: {money} coins 💰")
-    print("Choose something to feed your pet:")
-    print("1. Apple 🍎 (Cost: 80 | +10 mood)")
-    print("2. Cake 🍰 (Cost: 150 | +20 mood)")
-    print("3. Coffee ☕ (Cost: 50 | +5 mood)")
-    print("4. Carrot 🥕 (Cost: 65 | +8 mood)")
-    print("5. Sushi 🍣 (Cost: 130 | +15 mood)")
-    print("6. Custom food ✏️ (Cost: 80 | +10 mood)")
-    print("7. Return")
-    choice = input("Select (1–7): ").strip()
+    
+    # If food_type provided, use it directly
+    if food_type:
+        food_type = food_type.lower()
+        if food_type not in foods:
+            print(f"Invalid food type: {food_type}. Valid options: {', '.join(foods.keys())}")
+            return
+        selected = food_type
+    else:
+        # Interactive mode
+        print(f"\n{name}'s current mood: {mood}/100 😊")
+        print(f"Current balance: {money} coins 💰")
+        print("Choose something to feed your pet:")
+        print("1. Apple 🍎 (Cost: 80 | +10 mood)")
+        print("2. Cake 🍰 (Cost: 150 | +20 mood)")
+        print("3. Coffee ☕ (Cost: 50 | +5 mood)")
+        print("4. Carrot 🥕 (Cost: 65 | +8 mood)")
+        print("5. Sushi 🍣 (Cost: 130 | +15 mood)")
+        print("6. Custom food ✏️ (Cost: 80 | +10 mood)")
+        print("7. Return")
+        choice = input("Select (1–7): ").strip()
 
-    mapping = {
-        "1": "apple",
-        "2": "cake",
-        "3": "coffee",
-        "4": "carrot",
-        "5": "sushi",
-        "6": "custom",
-    }
-    if choice == "7":
-        return
-    if choice not in mapping:
-        print(" Invalid choice.")
-        return
+        mapping = {
+            "1": "apple",
+            "2": "cake",
+            "3": "coffee",
+            "4": "carrot",
+            "5": "sushi",
+            "6": "custom",
+        }
+        if choice == "7":
+            return
+        if choice not in mapping:
+            print(" Invalid choice.")
+            return
+        selected = mapping[choice]
 
-    selected = mapping[choice]
     food = foods[selected]
 
     # handle custom name
