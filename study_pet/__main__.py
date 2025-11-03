@@ -7,13 +7,48 @@ import study_pet.tracker as tracker
 
 def main():
     parser = argparse.ArgumentParser(description="🐾 StudyPet CLI")
-    parser.add_argument(
-        "command",
-        nargs="?",
-        default="menu",
-        help="Available commands: start, end, status, feed, menu",
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+    
+    # Start command
+    subparsers.add_parser("start", help="Start a study session")
+    
+    # End command
+    subparsers.add_parser("end", help="End current study session")
+    
+    # Status command
+    subparsers.add_parser("status", help="Check pet status")
+    
+    # Feed command
+    feed_parser = subparsers.add_parser("feed", help="Feed your pet")
+    feed_parser.add_argument(
+        "--food-type",
+        choices=["apple", "cake", "coffee", "carrot", "sushi", "custom"],
+        help="Food type to feed directly (optional, shows menu if not provided)",
     )
+    
+    # Collect command
+    collect_parser = subparsers.add_parser("collect", help="Collect coins")
+    collect_parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Force collection, bypass cooldown (for testing)",
+    )
+    
+    # Rename command
+    rename_parser = subparsers.add_parser("rename", help="Rename your pet")
+    rename_parser.add_argument(
+        "--name",
+        help="New name for your pet (optional, will prompt if not provided)",
+    )
+    
+    # Menu command (default)
+    subparsers.add_parser("menu", help="Open interactive menu")
+    
     args = parser.parse_args()
+    
+    # Default to menu if no command provided
+    if not args.command:
+        args.command = "menu"
 
     check_daily_mood_decay()
 
@@ -24,11 +59,15 @@ def main():
     elif args.command == "status":
         print(get_status())
     elif args.command == "feed":
-        feed_pet()
+        feed_pet(food_type=getattr(args, 'food_type', None))
+    elif args.command == "collect":
+        collect_money(force=getattr(args, 'force', False))
+    elif args.command == "rename":
+        rename_pet(new_name=getattr(args, 'name', None))
     elif args.command == "menu":
         main_menu()
     else:
-        print("Unknown command. Use: start | end | status | feed | menu")
+        parser.print_help()
 
 
 def actions_menu():
