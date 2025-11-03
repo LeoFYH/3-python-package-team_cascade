@@ -37,7 +37,7 @@ def test_reset_state_resets_to_default():
     dm.save_state({"name": "WrongPet", "level": 10})
     dm.reset_state()
     state = dm.load_state()
-    assert state["name"] == "PomPom"
+    assert state["name"] == "Guido"
     assert state["level"] == 1
 
 
