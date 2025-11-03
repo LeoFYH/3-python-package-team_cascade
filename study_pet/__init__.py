@@ -8,4 +8,4 @@ __all__ = ["start_session", "end_session", "get_status", "reset_pet"]
 def reset_pet():
     """Resets all pet data and progress."""
     _reset_state()
-    print("Your pet has been reborn! All progress reset.")
+    print("🐣 Your pet has been reborn! All progress reset.")
