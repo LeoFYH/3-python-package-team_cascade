@@ -7,9 +7,12 @@ DATA_PATH = os.path.join(DATA_DIR, "data.json")
 default_state = {
     "name": "PomPom",
     "level": 1,
-    "experience": 0,
+    "experience": 0.0,
     "total_study_time": 0.0,
     "last_session_start": None,
+    "last_study_date": None,
+    "mood": 100,
+    "streak_days": 0,
 }
 
 
