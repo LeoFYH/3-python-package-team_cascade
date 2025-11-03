@@ -17,7 +17,7 @@ def clean_state():
 
 def test_update_pet_increases_level():
     state = load_state()
-    state["total_study_time"] = 10.0  # 、
+    state["total_study_time"] = 10.0  
     save_state(state)
 
     new_state = update_pet()
