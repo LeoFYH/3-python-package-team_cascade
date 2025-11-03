@@ -5,7 +5,7 @@ DATA_DIR = os.path.expanduser("~/.study_pet")
 DATA_PATH = os.path.join(DATA_DIR, "data.json")
 
 default_state = {
-    "name": "PomPom",
+    "name": "Guido",
     "level": 1,
     "experience": 0.0,
     "total_study_time": 0.0,

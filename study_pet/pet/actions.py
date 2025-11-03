@@ -36,7 +36,7 @@ def collect_money():
     """
     state = load_state()
     now = time.time()
-    name = state.get("name", "PomPom")
+    name = state.get("name", "Guido")
     last_collect = state.get("last_collect_time", None)
 
     cooldown = 30 * 60  # 30 minutes in seconds
@@ -66,7 +66,7 @@ def feed_pet():
     Each food has different cost and mood increase.
     """
     state = load_state()
-    name = state.get("name", "PomPom")
+    name = state.get("name", "Guido")
     money = state.get("money", 0)
     mood = state.get("mood", 100)
 
