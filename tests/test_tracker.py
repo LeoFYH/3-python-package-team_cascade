@@ -5,7 +5,7 @@ import pytest
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
-from study_pet.tracker import start_session, end_session, get_total_time
+from study_pet.tracker import start_session, end_session, get_total_time, reset_sessions
 from study_pet.data_manager import load_state, reset_state, save_state
 
 
@@ -37,6 +37,14 @@ def test_get_total_time_matches_state():
     save_state(state)
     total_time = get_total_time()
     assert abs(total_time - 12.34) < 0.001
+
+
+def test_reset_sessions_clears_active_session():
+
+    start_session()
+    reset_sessions()
+    state = load_state()
+    assert state["last_session_start"] is None
 
 
 def test_end_session_without_start_does_not_crash():
