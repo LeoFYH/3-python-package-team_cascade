@@ -2,6 +2,7 @@
 
 ````markdown
 # StudyPet
+
 ## Team Members
 
 - [Catherine Yu](https://github.com/catherineyu2014)
